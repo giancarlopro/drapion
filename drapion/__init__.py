@@ -14,7 +14,7 @@ Example usage:
 The purpose of this project is just fun.
 
 :copyright: (c) 2018 Giancarlo Rocha
-:license: MIT, see LICENSE for more details.
+:license: Apache 2.0, see LICENSE for more details.
 """
 
 from drapion.objects import GenericObject, Drapion

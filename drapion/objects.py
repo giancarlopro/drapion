@@ -5,7 +5,7 @@ drapion.objects
 This module implements the core objects used by drapion
 
 :copyright: (c) 2018 Giancarlo Rocha
-:license: MIT, see LICENSE for more details.
+:license: Apache 2.0, see LICENSE for more details.
 """
 
 from typing import Union, List, Dict
