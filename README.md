@@ -1,2 +1,3 @@
-# drapion
-drAPIon is a api client parse for any api
+# Drapion
+
+Drapion is a simple python library for parsing web API's
