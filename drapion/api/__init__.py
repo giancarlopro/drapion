@@ -8,4 +8,7 @@ This module contains specific implementations for public API's
 :license: Apache 2.0, see LICENSE for more details.
 """
 
-__all__ = []
+from .telegram import TelegramBotAPI
+
+
+__all__ = ['TelegramBotAPI']
