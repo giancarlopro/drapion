@@ -19,28 +19,28 @@ class GenericObject:
 
     dot-like access lookup inside _attributes dict
 
-    >>> go = GenericObject(attributes={'name': 'Drapion'})
-    >>> go.name
-    'Drapion'
+        >>> go = GenericObject(attributes={'name': 'Drapion'})
+        >>> go.name
+        'Drapion'
 
     Dict-like access also lookup inside _attributes dict
 
-    >>> go['name']
-    'Drapion'
+        >>> go['name']
+        'Drapion'
 
     List-like access lookup inside _values list
 
-    >>> go = GenericObject(values=['Drapion', 'Library'])
-    >>> go[0]
-    'Drapion'
+        >>> go = GenericObject(values=['Drapion', 'Library'])
+        >>> go[0]
+        'Drapion'
 
     It's possible to iterate over the instance values,
     the values of _attributes.values() and _values are summed up
 
-    >>> for item in go:
-    >>>     print(item)
-    'Drapion'
-    'Library'
+        >>> for item in go:
+        >>>     print(item)
+        'Drapion'
+        'Library'
     """
 
     def __init__(self, attributes: Dict = {}, values: List = []):
@@ -102,3 +102,6 @@ class Drapion:
     
     def __getattr__(self, name):
         return api_call(self.base_url + name, self.parser)
+
+    def __call__(self, endpoint: str):
+        return Drapion(self.base_url + endpoint, parser=self.parser)

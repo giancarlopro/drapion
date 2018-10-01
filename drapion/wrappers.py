@@ -35,11 +35,11 @@ def api_call(url: str, parser: Any):
         else:
             func = requests.get # TODO: Maybe raise an exception
         
+        rkwargs = kwargs.pop('rkwargs', {})
+
         params = '?'
         for key in kwargs:
             params += key + '=' + kwargs[key] + '&'
-        
-        rkwargs = kwargs.pop('rkwargs', {})
 
         resource = func(url + params, **rkwargs).json()
         return parser.parse(resource)
