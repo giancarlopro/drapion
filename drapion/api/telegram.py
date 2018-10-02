@@ -1,4 +1,4 @@
-from drapion import Drapion, GenericObject
+from drapion import Drapion
 
 
 class TelegramBotAPI(Drapion):
