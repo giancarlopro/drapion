@@ -1,6 +1,6 @@
 """
 drapion.api
-~~~~~~~~~~~~~~~
+~~~~~~~~~~~
 
 This module contains specific implementations for public API's
 
