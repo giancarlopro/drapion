@@ -69,11 +69,14 @@ class Drapion:
     """
 
     def __init__(self, base_url: str, parser = parsers.JSONParser):
-        self.base_url = base_url
+        if base_url[-1] is '/':
+            self.base_url = base_url[:-1]
+        else:
+            self.base_url = base_url
         self.parser = parser
     
     def __getattr__(self, name):
-        return Drapion(self.base_url + name, parser=self.parser)
+        return Drapion(self.base_url + '/' + name, parser=self.parser)
 
     def __call__(self, _method: str = 'get', *args, **kwargs):
         """Connects to API and parse its response
@@ -91,10 +94,13 @@ class Drapion:
         
         rkwargs = kwargs.pop('rkwargs', {})
 
-        params = '?'
-        for key in kwargs:
-            params += key + '=' + kwargs[key] + '&'
+        if _method is 'get':
+            params = '?'
+            for key in kwargs:
+                params += key + '=' + kwargs[key] + '&'
 
-        resource = func(self.base_url + params, **rkwargs).text
+            resource = func(self.base_url + params, **rkwargs).text
+        else:
+            resource = func(self.base_url, data=kwargs, **rkwargs).text
 
         return self.parser.parse(resource)
