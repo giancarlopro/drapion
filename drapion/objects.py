@@ -87,7 +87,7 @@ class Drapion:
         if _method in ('get', 'options', 'head', 'post', 'put', 'patch', 'delete'):
             func = getattr(requests, _method)
         else:
-            func = requests.get # TODO: Maybe raise an exception
+            raise Exception('Unknown method {}'.format(_method))
         
         rkwargs = kwargs.pop('rkwargs', {})
 
