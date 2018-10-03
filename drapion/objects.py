@@ -11,15 +11,15 @@ This module implements the core objects used by drapion
 from typing import Union, List, Dict
 import requests
 
-from drapion.wrappers import api_call
+from drapion import parsers
 
 
-class GenericObject:
+class DObject:
     """Stores attributes and values to access like python objects
 
     dot-like access lookup inside _attributes dict
 
-        >>> go = GenericObject(attributes={'name': 'Drapion'})
+        >>> go = DObject(attributes={'name': 'Drapion'})
         >>> go.name
         'Drapion'
 
@@ -30,7 +30,7 @@ class GenericObject:
 
     List-like access lookup inside _values list
 
-        >>> go = GenericObject(values=['Drapion', 'Library'])
+        >>> go = DObject(values=['Drapion', 'Library'])
         >>> go[0]
         'Drapion'
 
@@ -60,34 +60,6 @@ class GenericObject:
     def __iter__(self):
         iterator = list(self._attributes.values()) + self._values
         return iter(iterator)
-    
-    @classmethod
-    def parse(cls, obj: Union[List, Dict]):
-        """Parses a python-like object into a GenericObject instance
-
-        :param cls: Class wich parse was called
-        :param obj: Dictionary or List, representation of the API response
-            in the form of python objects, eg. dicts and list
-        :return: Instance of cls class
-        """
-
-        attributes: Dict = {}
-        values: List = []
-
-        if isinstance(obj, List):
-            for item in obj:
-                if isinstance(item, List) or isinstance(item, Dict):
-                    values.append(cls.parse(item))
-                else:
-                    values.append(item)
-        elif isinstance(obj, Dict):
-            for key in obj.keys():
-                if isinstance(obj[key], List) or isinstance(obj[key], Dict):
-                    attributes[key] = cls.parse(obj[key])
-                else:
-                    attributes[key] = obj[key]
-        
-        return cls(attributes, values)
 
 class Drapion:
     """Sends a request to the API, with an endpoint
@@ -96,12 +68,33 @@ class Drapion:
     :param parser: Parser class used to parse the API Responde into a object
     """
 
-    def __init__(self, base_url: str, parser = GenericObject):
+    def __init__(self, base_url: str, parser = parsers.JSONParser):
         self.base_url = base_url
         self.parser = parser
     
     def __getattr__(self, name):
-        return api_call(self.base_url + name, self.parser)
+        return Drapion(self.base_url + name, parser=self.parser)
 
-    def __call__(self, endpoint: str):
-        return Drapion(self.base_url + endpoint, parser=self.parser)
+    def __call__(self, _method: str = 'get', *args, **kwargs):
+        """Connects to API and parse its response
+
+        :param _method: Method to be used with requests
+        :param rkwargs: (Optional) Dictionary, Optional kwargs to send with requests,
+            any kwarg available for requests library
+        :return: The result from parser.parse
+        """
+
+        if _method in ('get', 'options', 'head', 'post', 'put', 'patch', 'delete'):
+            func = getattr(requests, _method)
+        else:
+            func = requests.get # TODO: Maybe raise an exception
+        
+        rkwargs = kwargs.pop('rkwargs', {})
+
+        params = '?'
+        for key in kwargs:
+            params += key + '=' + kwargs[key] + '&'
+
+        resource = func(self.base_url + params, **rkwargs).text
+
+        return self.parser.parse(resource)

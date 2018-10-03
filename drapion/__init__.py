@@ -17,8 +17,8 @@ The purpose of this project is just fun.
 :license: Apache 2.0, see LICENSE for more details.
 """
 
-from drapion.objects import GenericObject, Drapion
+from drapion.objects import DObject, Drapion
 
 
 __version__ = '0.1.0-dev'
-__all__ = ['GenericObject', 'Drapion']
+__all__ = ['DObject', 'Drapion']
