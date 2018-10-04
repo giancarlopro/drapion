@@ -60,6 +60,12 @@ class DObject:
     def __iter__(self):
         iterator = list(self._attributes.values()) + self._values
         return iter(iterator)
+    
+    def __repr__(self):
+        return 'DObject(attributes={}, values={})'.format(
+            self._attributes,
+            self._values
+        )
 
 class Drapion:
     """Sends a request to the API, with an endpoint
@@ -71,9 +77,15 @@ class Drapion:
     def __init__(self, endpoint: str, parser = parsers.JSONParser):
         self.endpoint = endpoint[:-1] if endpoint[-1] is '/' else endpoint
         self.parser = parser
+        self._endpoints = {}
     
     def __getattr__(self, name):
-        return Drapion(self.endpoint + '/' + name, parser=self.parser)
+        if name in self._endpoints:
+            return self._endpoints[name]
+        
+        instance = Drapion(self.endpoint + '/' + name, parser=self.parser)
+        self._endpoints[name] = instance
+        return instance
 
     def __call__(self, _method: str = 'get', *args, **kwargs):
         """Connects to API and parse its response
@@ -101,3 +113,8 @@ class Drapion:
             resource = func(self.endpoint, data=kwargs, **rkwargs).text
 
         return self.parser.parse(resource)
+    
+    def __repr__(self):
+        return 'Drapion(endpoint={})'.format(
+            self.endpoint
+        )
