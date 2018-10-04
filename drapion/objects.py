@@ -64,19 +64,16 @@ class DObject:
 class Drapion:
     """Sends a request to the API, with an endpoint
     
-    :param base_url: API base url
+    :param endpoint: API endpoint
     :param parser: Parser class used to parse the API Responde into a object
     """
 
-    def __init__(self, base_url: str, parser = parsers.JSONParser):
-        if base_url[-1] is '/':
-            self.base_url = base_url[:-1]
-        else:
-            self.base_url = base_url
+    def __init__(self, endpoint: str, parser = parsers.JSONParser):
+        self.endpoint = endpoint[:-1] if endpoint[-1] is '/' else endpoint
         self.parser = parser
     
     def __getattr__(self, name):
-        return Drapion(self.base_url + '/' + name, parser=self.parser)
+        return Drapion(self.endpoint + '/' + name, parser=self.parser)
 
     def __call__(self, _method: str = 'get', *args, **kwargs):
         """Connects to API and parse its response
@@ -99,8 +96,8 @@ class Drapion:
             for key in kwargs:
                 params += key + '=' + kwargs[key] + '&'
 
-            resource = func(self.base_url + params, **rkwargs).text
+            resource = func(self.endpoint + params, **rkwargs).text
         else:
-            resource = func(self.base_url, data=kwargs, **rkwargs).text
+            resource = func(self.endpoint, data=kwargs, **rkwargs).text
 
         return self.parser.parse(resource)
