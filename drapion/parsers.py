@@ -9,6 +9,7 @@ This module implements Drapion core parsers
 """
 
 import json
+from json import JSONDecodeError
 from typing import Dict, List, Union
 
 from drapion import objects
@@ -16,7 +17,7 @@ from drapion import objects
 
 class BaseParser:
     @classmethod
-    def parse(cls, data: str) -> objects.DObject:
+    def parse(cls, data: str):
         """Creates a DObject with a `content` attribute containing data
 
         :param data: Data to put inside content attribute
@@ -26,13 +27,16 @@ class BaseParser:
 
 class JSONParser(BaseParser):
     @classmethod
-    def parse(cls, data: Union[str, Dict, List]) -> objects.DObject:
+    def parse(cls, data: Union[str, Dict, List]):
         """Parses a JSON into a DObject instance
 
         :param data: JSON str or parsed json e.g.: List or Dict
         :return: Instance of DObject
         """
-        obj = json.loads(data) if isinstance(data, str) else data
+        try:
+            obj = json.loads(data) if isinstance(data, str) else data
+        except JSONDecodeError:
+            return super().parse(data)
 
         attributes: Dict = {}
         values: List = []
