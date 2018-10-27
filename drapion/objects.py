@@ -58,8 +58,10 @@ class DObject:
         return self._values[key]
     
     def __iter__(self):
-        iterator = list(self._attributes.values()) + self._values
-        return iter(iterator)
+        for value in self._attributes.values():
+            yield value
+        for value in self._values:
+            yield value
     
     def __repr__(self):
         return 'DObject(attributes={}, values={})'.format(
