@@ -115,6 +115,6 @@ class Drapion:
         return self.parser.parse(resource)
     
     def __repr__(self):
-        return 'Drapion(endpoint={})'.format(
+        return 'Drapion(endpoint=\'{}\')'.format(
             self.endpoint
         )
