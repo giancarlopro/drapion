@@ -25,6 +25,7 @@ class BaseParser:
         """
         return objects.DObject(attributes={'content': data})
 
+
 class JSONParser(BaseParser):
     @classmethod
     def parse(cls, data: Union[str, Dict, List]):
@@ -53,5 +54,5 @@ class JSONParser(BaseParser):
                     attributes[key] = cls.parse(obj[key])
                 else:
                     attributes[key] = obj[key]
-        
+
         return objects.DObject(attributes=attributes, values=values)

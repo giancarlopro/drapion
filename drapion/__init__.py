@@ -7,7 +7,8 @@ Example usage:
 
     >>> from drapion import Drapion
     >>> bot = Drapion('https://jsonplaceholder.typicode.com/')
-    >>> r = bot.users() # Will connect to https://jsonplaceholder.typicode.com/users endpoint
+    >>> r = bot.users() # Will connect to
+                        # https://jsonplaceholder.typicode.com/users endpoint
     >>> r[0].name
     'Leanne Graham'
 

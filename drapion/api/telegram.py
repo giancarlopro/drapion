@@ -15,12 +15,13 @@ class TelegramParser(parsers.BaseParser):
 
         if obj['ok'] is False:
             raise Exception(obj['description'])
-        
+
         return parsers.JSONParser.parse(obj['result'])
+
 
 class TelegramBotAPI(Drapion):
     """Creates an Drapion instance from a telegram bot api token
-    
+
     See documentation for api reference:
     https://core.telegram.org/bots/api
     """

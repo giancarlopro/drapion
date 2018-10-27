@@ -8,7 +8,7 @@ This module implements the core objects used by drapion
 :license: Apache 2.0, see LICENSE for more details.
 """
 
-from typing import Union, List, Dict
+from typing import List, Dict
 import requests
 
 from drapion import parsers
@@ -51,40 +51,41 @@ class DObject:
         if name in self._attributes:
             return self._attributes[name]
         raise AttributeError
-    
+
     def __getitem__(self, key):
         if isinstance(key, str):
             return self._attributes[key]
         return self._values[key]
-    
+
     def __iter__(self):
         for value in self._attributes.values():
             yield value
         for value in self._values:
             yield value
-    
+
     def __repr__(self):
         return 'DObject(attributes={}, values={})'.format(
             self._attributes,
             self._values
         )
 
+
 class Drapion:
     """Sends a request to the API, with an endpoint
-    
+
     :param endpoint: API endpoint
     :param parser: Parser class used to parse the API Responde into a object
     """
 
-    def __init__(self, endpoint: str, parser = parsers.JSONParser):
+    def __init__(self, endpoint: str, parser=parsers.JSONParser):
         self.endpoint = endpoint[:-1] if endpoint[-1] is '/' else endpoint
         self.parser = parser
         self._endpoints = {}
-    
+
     def __getattr__(self, name):
         if name in self._endpoints:
             return self._endpoints[name]
-        
+
         instance = Drapion(self.endpoint + '/' + name, parser=self.parser)
         self._endpoints[name] = instance
         return instance
@@ -93,16 +94,18 @@ class Drapion:
         """Connects to API and parse its response
 
         :param _method: Method to be used with requests
-        :param rkwargs: (Optional) Dictionary, Optional kwargs to send with requests,
+        :param rkwargs: (Optional) Dictionary,
+            Optional kwargs to send with requests,
             any kwarg available for requests library
         :return: The result from parser.parse
         """
 
-        if _method in ('get', 'options', 'head', 'post', 'put', 'patch', 'delete'):
+        if _method in ('get', 'options', 'head', 'post',
+                       'put', 'patch', 'delete'):
             func = getattr(requests, _method)
         else:
             raise Exception('Unknown method {}'.format(_method))
-        
+
         rkwargs = kwargs.pop('rkwargs', {})
 
         if _method is 'get':
@@ -115,7 +118,7 @@ class Drapion:
             resource = func(self.endpoint, data=kwargs, **rkwargs).text
 
         return self.parser.parse(resource)
-    
+
     def __repr__(self):
         return 'Drapion(endpoint=\'{}\')'.format(
             self.endpoint
